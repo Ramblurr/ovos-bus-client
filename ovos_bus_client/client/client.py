@@ -18,7 +18,7 @@ from ovos_bus_client.conf import load_message_bus_config, MessageBusClientConf, 
 from ovos_bus_client.message import Message, CollectionMessage, GUIMessage
 from ovos_bus_client.session import SessionManager, Session
 from ovos_bus_client.util import create_echo_function
-
+import traceback
 try:
     from mycroft_bus_client import MessageBusClient as _MessageBusClientBase
 except ImportError:
@@ -43,6 +43,12 @@ class MessageBusClient(_MessageBusClientBase):
 
     def __init__(self, host=None, port=None, route=None, ssl=None,
                  emitter=None, cache=False):
+
+        LOG.info("XXX MessageBusClient ctor XXX")
+        traceback.print_stack()
+        stack_trace_str = "".join(traceback.format_stack())
+        LOG.info(stack_trace_str)
+        LOG.info("end XXX MessageBusClient ctor XXX")
         config_overrides = dict(host=host, port=port, route=route, ssl=ssl)
         if cache and self._config_cache:
             config = self._config_cache
@@ -168,7 +174,7 @@ class MessageBusClient(_MessageBusClientBase):
         if hasattr(message, 'serialize'):
             msg = message.serialize()
         else:
-            msg = json.dumps(message.__dict__)      
+            msg = json.dumps(message.__dict__)
         try:
             self.client.send(msg)
         except WebSocketConnectionClosedException:
